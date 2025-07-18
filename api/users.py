@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from db.db_setup import SessionDep
 from db.models.user import User, UserCreate, UserPublic, UserUpdate
+from sqlalchemy.exc import IntegrityError
 
 router = APIRouter(tags=['users'])
 
@@ -15,7 +16,11 @@ async def get_users(session: SessionDep):
 async def create_user(user: UserCreate, session: SessionDep):
     db_user = User.model_validate(user)
     session.add(db_user)
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(status_code=422, detail="Email already exists")
     session.refresh(db_user)
     return db_user
 

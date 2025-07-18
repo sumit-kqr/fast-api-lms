@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 from sqlmodel import SQLModel, Field
 from sqlalchemy import Enum as SAEnum
+from pydantic import EmailStr
 from .mixins import Timestamp
 
 class Role(str, Enum):
@@ -9,7 +10,7 @@ class Role(str, Enum):
     student = "student"
 
 class UserBase(SQLModel):
-    email: str = Field(index=True, unique=True, max_length=100)
+    email: EmailStr = Field(index=True, unique=True, max_length=100)
     role: Role = Field(sa_type=SAEnum(Role, name="role"))
 
 class User(UserBase, Timestamp, table=True):

@@ -13,8 +13,8 @@ app = FastAPI(
     description="LMS for managing students and courses.",
     version="0.0.1",
     contact={
-        "name": "Gwen",
-        "email": "gwen@example.com",
+        "name": "Sumit",
+        "email": "sumit@example.com",
     },
     license_info={
         "name": "MIT",
