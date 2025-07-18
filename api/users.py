@@ -9,11 +9,19 @@ router = APIRouter(tags=['users'])
 
 @router.get("/users", response_model=List[UserPublic])
 async def get_users(session: SessionDep):
+    """
+    Retrieve a list of all users in the system.
+    Returns a list of user objects.
+    """
     users = session.exec(select(User)).all()
     return users
 
 @router.post("/users", response_model=UserPublic)
 async def create_user(user: UserCreate, session: SessionDep):
+    """
+    Create a new user with the provided information.
+    Returns the created user object. Raises 422 if email already exists.
+    """
     db_user = User.model_validate(user)
     session.add(db_user)
     try:
@@ -26,6 +34,10 @@ async def create_user(user: UserCreate, session: SessionDep):
 
 @router.get("/users/{id}", response_model=UserPublic)
 async def get_user(id: int, session: SessionDep):
+    """
+    Retrieve a user by their unique ID.
+    Returns the user object if found, otherwise raises 404.
+    """
     user = session.get(User, id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -33,6 +45,10 @@ async def get_user(id: int, session: SessionDep):
 
 @router.patch("/users/{id}", response_model=UserPublic)
 async def update_user(id: int, user: UserUpdate, session: SessionDep):
+    """
+    Update an existing user's information by ID.
+    Returns the updated user object. Raises 404 if not found.
+    """
     db_user = session.get(User, id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -45,6 +61,10 @@ async def update_user(id: int, user: UserUpdate, session: SessionDep):
 
 @router.delete("/users/{id}")
 async def delete_user(id: int, session: SessionDep):
+    """
+    Delete a user by their unique ID.
+    Returns a confirmation if successful, otherwise raises 404.
+    """
     user = session.get(User, id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")

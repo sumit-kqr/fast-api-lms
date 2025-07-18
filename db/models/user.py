@@ -6,46 +6,79 @@ from pydantic import EmailStr
 from .mixins import Timestamp
 
 class Role(str, Enum):
+    """
+    Enum for user roles. Can be 'teacher' or 'student'.
+    """
     teacher = "teacher"
     student = "student"
 
 class UserBase(SQLModel):
+    """
+    Base model for user data. Includes email and role fields.
+    """
     email: EmailStr = Field(index=True, unique=True, max_length=100)
     role: Role = Field(sa_type=SAEnum(Role, name="role"))
 
 class User(UserBase, Timestamp, table=True):
+    """
+    SQLModel table for users. Inherits from UserBase and Timestamp.
+    """
     __tablename__ = "users"
     id: Optional[int] = Field(default=None, primary_key=True)
 
 class UserPublic(UserBase):
+    """
+    Public schema for user data returned by the API.
+    """
     id: int
 
 class UserCreate(UserBase):
+    """
+    Schema for creating a new user.
+    """
     pass
 
 class UserUpdate(SQLModel):
+    """
+    Schema for updating user fields. All fields are optional.
+    """
     email: Optional[str] = None
     role: Optional[Role] = None
 
 class ProfileBase(SQLModel):
+    """
+    Base model for user profile data.
+    """
     first_name: str = Field(max_length=50)
     last_name: str = Field(max_length=50)
     bio: Optional[str] = None
     is_active: bool = Field(default=False)
 
 class Profile(ProfileBase, Timestamp, table=True):
+    """
+    SQLModel table for user profiles. Inherits from ProfileBase and Timestamp.
+    """
     __tablename__ = "profiles"
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: Optional[int] = Field(foreign_key="users.id")
 
 class ProfilePublic(ProfileBase):
+    """
+    Public schema for profile data returned by the API.
+    """
     id: int
     user_id: int
 
 class ProfileCreate(ProfileBase):
+    """
+    Schema for creating a new profile.
+    """
     user_id: int
 
 class ProfileUpdate(SQLModel):
+    """
+    Schema for updating profile fields. All fields are optional.
+    """
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     bio: Optional[str] = None

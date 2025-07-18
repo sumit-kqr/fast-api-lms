@@ -8,11 +8,19 @@ router = APIRouter(tags=['courses'])
 
 @router.get("/courses", response_model=List[CoursePublic])
 async def read_courses(session: SessionDep):
+    """
+    Retrieve a list of all courses in the system.
+    Returns a list of course objects.
+    """
     courses = session.exec(select(Course)).all()
     return courses
 
 @router.post("/courses", response_model=CoursePublic)
 async def create_course_api(course: CourseCreate, session: SessionDep):
+    """
+    Create a new course with the provided information.
+    Returns the created course object.
+    """
     db_course = Course.model_validate(course)
     session.add(db_course)
     session.commit()
@@ -21,6 +29,10 @@ async def create_course_api(course: CourseCreate, session: SessionDep):
 
 @router.get("/courses/{id}", response_model=CoursePublic)
 async def read_course(id: int, session: SessionDep):
+    """
+    Retrieve a course by its unique ID.
+    Returns the course object if found, otherwise raises 404.
+    """
     course = session.get(Course, id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -28,6 +40,10 @@ async def read_course(id: int, session: SessionDep):
 
 @router.patch("/courses/{id}", response_model=CoursePublic)
 async def update_course(id: int, course: CourseUpdate, session: SessionDep):
+    """
+    Update an existing course's information by ID.
+    Returns the updated course object. Raises 404 if not found.
+    """
     db_course = session.get(Course, id)
     if not db_course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -40,6 +56,10 @@ async def update_course(id: int, course: CourseUpdate, session: SessionDep):
 
 @router.delete("/courses/{id}")
 async def delete_course(id: int, session: SessionDep):
+    """
+    Delete a course by its unique ID.
+    Returns a confirmation if successful, otherwise raises 404.
+    """
     course = session.get(Course, id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -49,6 +69,10 @@ async def delete_course(id: int, session: SessionDep):
 
 @router.get("/courses/{id}/sections", response_model=List[SectionPublic])
 async def read_course_sections(id: int, session: SessionDep):
+    """
+    Retrieve all sections for a given course by course ID.
+    Returns a list of section objects. Raises 404 if course not found.
+    """
     course = session.get(Course, id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")

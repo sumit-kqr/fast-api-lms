@@ -9,6 +9,10 @@ connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, connect_args=connect_args)
 
 def get_session():
+    """
+    Dependency that provides a SQLModel session for database operations.
+    Yields a session object to be used in API endpoints.
+    """
     with Session(engine) as session:
         yield session
 

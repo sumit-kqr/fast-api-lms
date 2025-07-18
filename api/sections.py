@@ -7,6 +7,10 @@ router = APIRouter(tags=['sections'])
 
 @router.post("/sections/", response_model=SectionPublic)
 async def create_section(section: SectionCreate, session: SessionDep):
+    """
+    Create a new section with the provided information.
+    Returns the created section object.
+    """
     db_section = Section.model_validate(section)
     session.add(db_section)
     session.commit()
@@ -15,6 +19,10 @@ async def create_section(section: SectionCreate, session: SessionDep):
 
 @router.get("/sections/{id}", response_model=SectionPublic)
 async def read_section(id: int, session: SessionDep):
+    """
+    Retrieve a section by its unique ID.
+    Returns the section object if found, otherwise raises 404.
+    """
     section = session.get(Section, id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
@@ -22,6 +30,10 @@ async def read_section(id: int, session: SessionDep):
 
 @router.patch("/sections/{id}", response_model=SectionPublic)
 async def update_section(id: int, section: SectionUpdate, session: SessionDep):
+    """
+    Update an existing section's information by ID.
+    Returns the updated section object. Raises 404 if not found.
+    """
     db_section = session.get(Section, id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
@@ -34,6 +46,10 @@ async def update_section(id: int, section: SectionUpdate, session: SessionDep):
 
 @router.delete("/sections/{id}")
 async def delete_section(id: int, session: SessionDep):
+    """
+    Delete a section by its unique ID.
+    Returns a confirmation if successful, otherwise raises 404.
+    """
     section = session.get(Section, id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
@@ -43,6 +59,10 @@ async def delete_section(id: int, session: SessionDep):
 
 @router.get("/sections/{id}/content-blocks", response_model=List[ContentBlockPublic])
 async def read_section_content_blocks(id: int, session: SessionDep):
+    """
+    Retrieve all content blocks for a given section by section ID.
+    Returns a list of content block objects. Raises 404 if section not found.
+    """
     section = session.get(Section, id)
     if not section:
         raise HTTPException(status_code=404, detail="Section not found")
@@ -51,6 +71,10 @@ async def read_section_content_blocks(id: int, session: SessionDep):
 
 @router.post("/content-blocks/", response_model=ContentBlockPublic)
 async def create_content_block(content_block: ContentBlockCreate, session: SessionDep):
+    """
+    Create a new content block with the provided information.
+    Returns the created content block object.
+    """
     db_content_block = ContentBlock.model_validate(content_block)
     session.add(db_content_block)
     session.commit()
@@ -59,6 +83,10 @@ async def create_content_block(content_block: ContentBlockCreate, session: Sessi
 
 @router.get("/content-blocks/{id}", response_model=ContentBlockPublic)
 async def read_content_block(id: int, session: SessionDep):
+    """
+    Retrieve a content block by its unique ID.
+    Returns the content block object if found, otherwise raises 404.
+    """
     content_block = session.get(ContentBlock, id)
     if not content_block:
         raise HTTPException(status_code=404, detail="Content block not found")
@@ -66,6 +94,10 @@ async def read_content_block(id: int, session: SessionDep):
 
 @router.patch("/content-blocks/{id}", response_model=ContentBlockPublic)
 async def update_content_block(id: int, content_block: ContentBlockUpdate, session: SessionDep):
+    """
+    Update an existing content block's information by ID.
+    Returns the updated content block object. Raises 404 if not found.
+    """
     db_content_block = session.get(ContentBlock, id)
     if not db_content_block:
         raise HTTPException(status_code=404, detail="Content block not found")
@@ -78,6 +110,10 @@ async def update_content_block(id: int, content_block: ContentBlockUpdate, sessi
 
 @router.delete("/content-blocks/{id}")
 async def delete_content_block(id: int, session: SessionDep):
+    """
+    Delete a content block by its unique ID.
+    Returns a confirmation if successful, otherwise raises 404.
+    """
     content_block = session.get(ContentBlock, id)
     if not content_block:
         raise HTTPException(status_code=404, detail="Content block not found")
